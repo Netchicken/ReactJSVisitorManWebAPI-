@@ -1,26 +1,29 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import { Route, Switch } from "react-router-dom";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import "./App.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import StaffIndex from "./components/staff/StaffIndex";
+import AddStaffForm from "./components/staff/AddStaffForm";
+import AllStaff from "./components/staff/AllStaff";
+import StaffList from "./components/staff/StaffList";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; //make toasts
+import "react-toastify/dist/ReactToastify.min.css";
+
+class App extends Component {
+  render() {
+    return (
+      <div className="container-fluid">
+        <Switch>
+          <Route exact path="/" component={StaffIndex} />
+          <Route path="/allstaff" component={AllStaff} />
+          <Route path="/addstaffform" component={AddStaffForm} />
+          <Route path="/stafflist" component={StaffList} />
+        </Switch>
+        <ToastContainer autoClose={3000} />
+      </div>
+    );
+  }
 }
-
 export default App;

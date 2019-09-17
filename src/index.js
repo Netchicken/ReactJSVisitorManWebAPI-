@@ -1,12 +1,17 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import React from "react";
+import ReactDOM from "react-dom";
+import { BrowserRouter as Router} from "react-router-dom";
+import createHistory from "history/createBrowserHistory";
+import "./index.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import App from "./App";
+const history = createHistory();   //https://programmingwithmosh.com/react/react-router-add-the-power-of-navigation/
 
-ReactDOM.render(<App />, document.getElementById('root'));
-
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+//this puts whatever is in the render method of the App into the root
+ReactDOM.render(
+  <Router history={history}>
+    <App />
+   
+  </Router>,
+  document.getElementById("root")
+);
