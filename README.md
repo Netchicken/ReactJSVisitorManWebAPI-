@@ -1,3 +1,6 @@
+This is the front end in React from teh VisitorManagement ASP.net Core app.
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
