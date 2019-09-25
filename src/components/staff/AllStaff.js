@@ -4,7 +4,6 @@ import AddStaffForm from "./AddStaffForm";
 import { getAllStaff, deleteStaff } from "../../StaffApi";
 import StaffList from "./StaffList";
 import { toast } from "react-toastify";
-
 class AllStaff extends React.Component {
   constructor(props) {
     super(props);
