@@ -1,4 +1,5 @@
-This is the front end in React from teh VisitorManagement ASP.net Core app.
+This is the front end in React from the VisitorManagement ASP.net Core app.
+See the ASP app for configuring the api to work across domains. 
 
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
