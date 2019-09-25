@@ -1,9 +1,11 @@
 import { toast } from "react-toastify";
-
 const baseUrl = "https://localhost:44370/api/StaffNamesAPI";
 
 export async function handleResponse(response) {
-  if (response.ok) return response.json();
+  if (response.ok) {
+   // toast.success("Staff Deleted from server");
+    return response.json();
+  }
   if (response.status === 400) {
     // So, a server-side validation error occurred.
     // Server side validation returns a string error message, so parse as text instead of json.
@@ -16,7 +18,7 @@ export async function handleResponse(response) {
 // In a real app, would likely call an error logging service.
 export function handleError(error) {
   // eslint-disable-next-line no-console
-  console.error("API call failed. " + error);
+  console.error("StaffAPI API call failed. " + error);
   throw error;
 }
 
@@ -30,19 +32,26 @@ export function getAllStaff() {
 
 //  Content-Type: application/json is what the server must send to the client and the client must send Accept to tell the server which type of response it accepts.   Allow: "GET,POST",// POST for create, PUT to update when id already exists.//alert(data.name + " " + data.department);
 export function newStaff(data) {
-  console.log("New Staff " + data.name + " " + data.department);
+  console.log("StaffAPI New Staff " + data.name + " " + data.department);
   LogThis(data);
   //try this 'content-type': 'multipart/form-data'
-  return fetch(baseUrl, {
-    mode: "cors",
-    method: "POST",
-    headers: {
-      Accept: "application/json, text/plain",
-      "content-type": "application/json"
-    },
-    body: JSON.stringify(data)
-  })
-   // .then(this.history.push("/AllStaff"));
+
+  if (data.name != "" && data.department != "") {
+    return fetch(baseUrl, {
+      mode: "cors",
+      method: "POST",
+      headers: {
+        Accept: "application/json, text/plain",
+        "content-type": "application/json"
+      },
+      body: JSON.stringify(data)
+    });
+    
+  } else {
+    
+     console.log("StaffAPI ADD Staff - Cannot have empty fields " + data.name + " " + data.department);
+  }
+  // .then(this.history.push("/AllStaff"));
   //.then(response => response.json())
   // .then(responseJson => {
   //   this.props.history.push("/AllStaff");
@@ -54,6 +63,7 @@ export function newStaff(data) {
 //}
 
 export function editStaff(data) {
+  console.log("StaffAPI Edit Staff " + data.name + " " + data.department);
   LogThis(data);
   return fetch(baseUrl + "/" + data.id, {
     mode: "cors",
@@ -63,8 +73,8 @@ export function editStaff(data) {
       "Content-Type": "application/json"
     },
     body: JSON.stringify(data)
-  })
-    //.then(this.props.history.push("/AllStaff"));
+  });
+  //.then(this.props.history.push("/AllStaff"));
   //  .then(handleResponse)
   //  .catch(handleError);
 }
@@ -78,13 +88,11 @@ export function deleteStaff(id) {
       "Content-Type": "application/json"
     },
     body: JSON.stringify(id)
-  })
-    .then(() => {
-      toast.success("Staff Deleted.");
-      // history.push("/AllStaff"); //goes back to the last page
-    })
-    .then(handleResponse)
-    .catch(handleError);
+  }).then(() => {
+    toast.success("Staff Deleted from server");
+  });
+  //  .then(handleResponse)
+  //  .catch(handleError);
 }
 
 function LogThis(data) {

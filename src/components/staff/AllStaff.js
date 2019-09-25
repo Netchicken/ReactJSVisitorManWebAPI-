@@ -21,9 +21,14 @@ class AllStaff extends React.Component {
         name: "",
         department: "",
         visitorCount: 0
+      },
+      deleteStaff: {
+        id: 0,
+        name: "",
+        department: ""
       }
     };
-  //  this.destroy = this.destroy.bind(this); //https://stackoverflow.com/questions/50557662/unmounting-a-react-component-the-correct-way
+
     //bind the button clicks to the methods
     this.handleAdd = this.handleAdd.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
@@ -31,51 +36,54 @@ class AllStaff extends React.Component {
   }
 
   componentDidMount() {
-    //https://stackoverflow.com/questions/55097195/react-js-no-access-control-allow-origin-header-is-present-on-the-requested-r
+    this.getStaff(); //load staff when the page loads
+  }
+  componentDidUpdate(prevProps, prevState) {
+    this.getStaff(); //loads staff when something changes, such as add or delete or edit
+  }
 
-    //try this https://reactjsexample.com/tag/state/
-
+  //get the staff from the DB
+  getStaff() {
     getAllStaff().then(s => {
-      this.setState({
+      this.setState(() => ({
         staff: s,
         isLoaded: true
-      });
+      }));
     });
   }
 
   //this updates the staff list and is triggered in the AddStaffForm
-  handleToUpdate = someArg => {
+  handleToUpdate = updatedStaff => {
+    this.getStaff();
     //https://jsfiddle.net/ybeaz/e3Lab2ht/
-    toast("We pass argument from Child to Parent: " + someArg);
+    toast("Data updated! ");
 
-    getAllStaff().then(s => {
-      this.setState({
-        staff: s,
-        isLoaded: true,
-        isAddStaffForm: false //closes the form when submit is hit
-      });
-    });
-  };
+    //this should force a refresh of the StaffList component as it changes the staff data by downloading it from the db
+    //https://stackoverflow.com/questions/54320478/reactjs-state-not-updating
+    console.log("AllStaff handleToUpdate L67");
 
-  //https://stackoverflow.com/questions/50557662/unmounting-a-react-component-the-correct-way
-  // destroy(elementKey) {
-  //   console.log(elementKey);
-  //   let result = this.state.data.filter(item => item.key !== elementKey);
-  //   this.setState({ data: result });
-  // }
-
-  //button click methods
-  handleAdd() {
-    this.setState(state => ({
+    this.setState((state, props) => ({
+      ...state,
+      isLoaded: true,
       isAddStaffForm: !state.isAddStaffForm,
       editID: "",
       deleteID: "",
       editStaff: ""
     }));
+  };
 
-    //   toast(<div>Add Click </div>);
+  //button click methods
+  handleAdd() {
+    this.setState(state => ({
+      ...state,
+      isAddStaffForm: !state.isAddStaffForm,
+      editID: "",
+      deleteID: "",
+      editStaff: ""
+    }));
   }
 
+  //get the staff details in the row (id) from the db to pass to AddStaffForm
   handleEdit(id) {
     this.setState(state => ({
       ...state,
@@ -95,24 +103,33 @@ class AllStaff extends React.Component {
         "  editID " +
         this.state.editID
     );
-    // toast(
-    //   <div>
-    //     handleEdit Editing ...{this.state.editStaff.id}{" "}
-    //     {this.state.editStaff.name} {this.state.editStaff.department}
-    //   </div>
-    // );
   }
 
   handleDelete(id) {
     this.setState(state => ({
-      // deleteID: id,
-      editID: ""
+      ...state,
+      //get the staff to delete
+      deleteStaff: this.state.staff.find(s => s.id == id) //find is like first or default while filter returns array[0]
     }));
-    deleteStaff(id);
+
+    //get a confirmation
+
+    //delete the staff
+    deleteStaff(id); //delete from DB
+    this.removeFromLocal(id);
+  }
+
+  //https://vegibit.com/how-to-delete-an-item-from-an-array-in-react/
+  removeFromLocal(id) {
+    //return back all the staff who are not deleted - sheesh....
+    var notDeletedUsers = this.state.staff.filter(staff => staff.id !== id);
+    this.setState({ staff: notDeletedUsers });
+    // toast("Staff is deleted");
   }
 
   render() {
     const { isLoaded } = this.state; //pass across the state
+
     if (!isLoaded) {
       return (
         <div>
@@ -125,7 +142,7 @@ class AllStaff extends React.Component {
         <div className="container-fluid">
           <div className="row">
             <div className="col">
-              <StaffList
+              <StaffList 
                 staff={this.state.staff}
                 handleAdd={this.handleAdd}
                 handleEdit={this.handleEdit}
@@ -140,7 +157,6 @@ class AllStaff extends React.Component {
                     editID={this.state.editID}
                     editStaff={this.state.editStaff}
                     handleToUpdate={this.handleToUpdate}
-                    destroy={this.destroy}
                   />
                 ) : (
                   ""
@@ -153,5 +169,4 @@ class AllStaff extends React.Component {
     }
   }
 }
-
 export default AllStaff;
