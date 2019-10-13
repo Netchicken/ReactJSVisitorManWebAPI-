@@ -1,5 +1,6 @@
 import { toast } from "react-toastify";
 const baseUrl = "https://localhost:44370/api/StaffNamesAPI";
+const baseHomeUrl = "https://localhost:44370/api/HomeAPI";  //getting viewdata stuff
 
 export async function handleResponse(response) {
   if (response.ok) {
@@ -29,6 +30,15 @@ export function getAllStaff() {
     .then(handleResponse)
     .catch(handleError);
 }
+
+//Get the Conditions for acceptance
+export function getConditions() {
+  return fetch(baseHomeUrl)
+    .then(handleResponse)
+    .catch(handleError);
+}
+
+
 
 //  Content-Type: application/json is what the server must send to the client and the client must send Accept to tell the server which type of response it accepts.   Allow: "GET,POST",// POST for create, PUT to update when id already exists.//alert(data.name + " " + data.department);
 export function newStaff(data) {

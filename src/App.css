@@ -1,6 +1,5 @@
-body{
-  background-color: rgb(7, 53, 139);
-  
+body {
+  background-color: rgb(169, 185, 124);
 }
 
 .App {
@@ -92,7 +91,7 @@ body{
   width: 100%;
 }
 .data-table tr {
-  background-color: rgb(7, 53, 139);
+  background-color: rgb(5, 99, 17);
   width: 100%;
   display: table;
   font-weight: bold;
@@ -126,4 +125,20 @@ body{
   text-align: left;
   width: 25%;
   margin: 5px;
+}
+.conditions {
+  color: rgb(52, 20, 231);
+}
+.cardBody {
+  font-weight: bold;
+  padding: 15px;
+  margin-right: 5px; 
+  margin-top: 5px; 
+  min-height: 100px;
+}
+.heading{
+color: white;
+
+
+
 }

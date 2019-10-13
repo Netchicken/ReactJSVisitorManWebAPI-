@@ -11,6 +11,9 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; //make toasts
 import "react-toastify/dist/ReactToastify.min.css";
 
+import AllHome from "./components/home/AllHome";
+import ConditionsList from "./components/home/ConditionsList";
+
 class App extends Component {
   render() {
     return (
@@ -20,8 +23,12 @@ class App extends Component {
           <Route path="/allstaff" component={AllStaff} />
           <Route path="/addstaffform" component={AddStaffForm} />
           <Route path="/stafflist" component={StaffList} />
+           <Route path="/allhome" component={AllHome} />
+            <Route path="/conditionslist" component={ConditionsList} />
+
+
         </Switch>
-        <ToastContainer autoClose={3000} />
+        <ToastContainer autoClose={6000} />
       </div>
     );
   }
