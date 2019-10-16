@@ -13,6 +13,8 @@ import "react-toastify/dist/ReactToastify.min.css";
 
 import AllHome from "./components/home/AllHome";
 import ConditionsList from "./components/home/ConditionsList";
+import UserLogin from "./components/login/UserLogin";
+import AllLogs from "./AllLogs";
 
 class App extends Component {
   render() {
@@ -23,10 +25,10 @@ class App extends Component {
           <Route path="/allstaff" component={AllStaff} />
           <Route path="/addstaffform" component={AddStaffForm} />
           <Route path="/stafflist" component={StaffList} />
-           <Route path="/allhome" component={AllHome} />
-            <Route path="/conditionslist" component={ConditionsList} />
-
-
+          <Route path="/allhome" component={AllHome} />
+          <Route path="/conditionslist" component={ConditionsList} />
+          <Route path="/userlogin" component={UserLogin} />
+          <Route path="/alllogs" component={AllLogs} />
         </Switch>
         <ToastContainer autoClose={6000} />
       </div>

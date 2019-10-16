@@ -1,10 +1,13 @@
 import { toast } from "react-toastify";
-const baseUrl = "https://localhost:44370/api/StaffNamesAPI";
-const baseHomeUrl = "https://localhost:44370/api/HomeAPI";  //getting viewdata stuff
+import {LogVisitorIN } from "AllLogs"
+const localhost = "https://localhost:44370";
+const baseStaffNamesUrl = localhost + "/api/StaffNamesAPI";
+const baseHomeUrl = localhost + "/api/HomeAPI";
+const baseVisitorUrl = localhost + "/api/VisitorAPI";
 
 export async function handleResponse(response) {
   if (response.ok) {
-   // toast.success("Staff Deleted from server");
+    // toast.success("Staff Deleted from server");
     return response.json();
   }
   if (response.status === 400) {
@@ -25,8 +28,9 @@ export function handleError(error) {
 
 //https://dev.to/patrickgordon/react-redux-and-apis-part-two-react-only-dry-58jg
 
+//Get a list of all the staff names for the Dropdown list
 export function getAllStaff() {
-  return fetch(baseUrl)
+  return fetch(baseVisitorUrl)
     .then(handleResponse)
     .catch(handleError);
 }
@@ -38,8 +42,6 @@ export function getConditions() {
     .catch(handleError);
 }
 
-
-
 //  Content-Type: application/json is what the server must send to the client and the client must send Accept to tell the server which type of response it accepts.   Allow: "GET,POST",// POST for create, PUT to update when id already exists.//alert(data.name + " " + data.department);
 export function newStaff(data) {
   console.log("StaffAPI New Staff " + data.name + " " + data.department);
@@ -47,7 +49,7 @@ export function newStaff(data) {
   //try this 'content-type': 'multipart/form-data'
 
   if (data.name != "" && data.department != "") {
-    return fetch(baseUrl, {
+    return fetch(baseStaffNamesUrl, {
       mode: "cors",
       method: "POST",
       headers: {
@@ -56,16 +58,14 @@ export function newStaff(data) {
       },
       body: JSON.stringify(data)
     });
-    
   } else {
-    
-     console.log("StaffAPI ADD Staff - Cannot have empty fields " + data.name + " " + data.department);
+    console.log(
+      "StaffAPI ADD Staff - Cannot have empty fields " +
+        data.name +
+        " " +
+        data.department
+    );
   }
-  // .then(this.history.push("/AllStaff"));
-  //.then(response => response.json())
-  // .then(responseJson => {
-  //   this.props.history.push("/AllStaff");
-  //  });
 }
 
 // .then(handleResponse)
@@ -75,7 +75,7 @@ export function newStaff(data) {
 export function editStaff(data) {
   console.log("StaffAPI Edit Staff " + data.name + " " + data.department);
   LogThis(data);
-  return fetch(baseUrl + "/" + data.id, {
+  return fetch(baseStaffNamesUrl + "/" + data.id, {
     mode: "cors",
     method: "PUT",
     headers: {
@@ -84,13 +84,10 @@ export function editStaff(data) {
     },
     body: JSON.stringify(data)
   });
-  //.then(this.props.history.push("/AllStaff"));
-  //  .then(handleResponse)
-  //  .catch(handleError);
 }
 
 export function deleteStaff(id) {
-  return fetch(baseUrl + "/" + id, {
+  return fetch(baseStaffNamesUrl + "/" + id, {
     mode: "cors",
     method: "DELETE",
     headers: {
@@ -105,6 +102,29 @@ export function deleteStaff(id) {
   //  .catch(handleError);
 }
 
+export function visitorLogin(data) {
+  LogVisitorIN(data);
+  //try this 'content-type': 'multipart/form-data'
+  if (
+    data.firstName != "" &&
+    data.lastName != "" &&
+    data.business != "" &&
+    data.staffName != ""
+  ) {
+    return fetch(baseVisitorUrl + "/CreateVisitorLogin ", {
+      mode: "cors",
+      method: "POST",
+      headers: {
+        Accept: "application/json, text/plain",
+        "content-type": "application/json"
+      },
+      body: data // JSON.stringify(data)
+    });
+  } else {
+    LogVisitorIN(data);
+  }
+}
+
 function LogThis(data) {
   console.log(
     "StaffApi L59 " +
@@ -114,8 +134,9 @@ function LogThis(data) {
       " " +
       data.department +
       "  " +
-      baseUrl +
+      baseStaffNamesUrl +
       "/" +
       data.id
   );
 }
+

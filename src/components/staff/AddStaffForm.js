@@ -1,6 +1,6 @@
 import React from "react";
 import { newStaff, editStaff } from "../../StaffApi";
-import { withRouter } from "react-router-dom"; //for history
+//import { withRouter } from "react-router-dom"; //for history
 import { toast } from "react-toastify";
 
 class AddStaffForm extends React.Component {
@@ -134,6 +134,7 @@ class AddStaffForm extends React.Component {
     this.setState({
       res: this.stringifyFormData(data)
     });
+    
     console.log(
       //cool but not supported in IE
       "FormData L80 " +

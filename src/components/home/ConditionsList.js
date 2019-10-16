@@ -16,18 +16,16 @@ import {
 
 const ConditionsList = props => {
   return (
-    <div class="row">
+    <div className="row">
       {props.conditions.map((item, index) => {
        return item.includes("Heading") ? (
-         <h2 class="col col-md-12 col-sm-12 heading">
+         <h2 className="col col-md-12 col-sm-12 heading" key={index}>
            {item.replace("Heading", "")}
          </h2>
        ) : (
-         <div class="col col-md-3 col-sm-6  ">
-           <Card className="cardBody  ">
-             <CardText className="conditions " Key={index}>
-               {item}
-             </CardText>
+         <div className="col col-md-3 col-sm-6  ">
+           <Card className="cardBody" key={index}>
+             <CardText className="conditions ">{item}</CardText>
            </Card>
          </div>
        );
