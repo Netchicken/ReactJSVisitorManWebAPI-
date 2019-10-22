@@ -24,10 +24,12 @@ class UserLogin extends Component {
         staffName: ""
       },
       dropdownOpen: false,
-      saveVisitor: false
+      saveVisitor: false,
+      dropDownValue: "",
+      inputBoxEnabled: false
     };
 
-    this.changeValue = this.changeValue.bind(this);
+    this.changeDropDownValue = this.changeDropDownValue.bind(this);
     this.toggle = this.toggle.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -47,33 +49,51 @@ class UserLogin extends Component {
       //      }
     }
   }
-  //https://medium.com/front-end-weekly/react-quick-tip-easy-data-binding-with-a-generic-onchange-handler-fb0254a7094e
-
-  //https://medium.com/better-programming/handling-multiple-form-inputs-in-react-c5eb83755d15
-  handleChange(e) {
-    const name = e.target.name;
-    const newValue = e.target.value;
-    this.setState({
-      login: {
-        ...this.state.login,
-        [name]: newValue
-      }
-    });
-
-    console.log(name); // the name of the form element
-    console.log([name]); // the name of the form element []
-    console.log(newValue); // the value of the form element
-  }
-
   //https://reactstrap.github.io/components/dropdowns/
   toggle() {
     this.setState(prevState => ({
       dropdownOpen: !prevState.dropdownOpen
     }));
   }
+  //https://medium.com/front-end-weekly/react-quick-tip-easy-data-binding-with-a-generic-onchange-handler-fb0254a7094e
+
+  //https://medium.com/better-programming/handling-multiple-form-inputs-in-react-c5eb83755d15
+  handleChange(e) {
+    const name = e.target.name;
+    const newValue = e.target.value;
+    this.setState(prevState => ({
+      login: {
+        ...this.state.login,
+        [name]: newValue,
+        staffName: this.state.dropDownValue
+      }
+    }));
+    console.log(name); // the name of the form element
+    console.log([name]); // the name of the form element []
+    console.log(newValue); // the value of the form element
+    console.log(
+      "Staffname " +
+        this.state.staffName +
+        " dropDownValue " +
+        this.state.dropDownValue
+    );
+  }
+
   //passes the value from the dropdownbox to the staffNames property
-  changeValue(e) {
-    this.setState({ login: { staffName: e.currentTarget.textContent } });
+  changeDropDownValue(e) {
+    const name = e.target.name;
+    const newValue = e.currentTarget.textContent; //   e.target.value;
+
+    this.setState({
+      inputBoxEnabled: true,
+      dropDownValue: newValue,
+      login: { staffName: newValue }
+    });
+
+    console.log(this.state.inputBoxEnabled); // the name of the form element
+    console.log(name); // the name of the form element
+    // console.log([name]); // the name of the form element []
+    // console.log(newValue); // the value of the form element
   }
 
   handleSubmit(event) {
@@ -122,16 +142,58 @@ class UserLogin extends Component {
     // });
   }
 
+  canBeSubmitted() {
+    //https://goshakkk.name/form-recipe-disable-submit-button-react/
+    //returns a bool to see that there is data in all teh fields and it can be submitted
+    const { firstName, lastName, staffName, business } = this.state.login;
+    //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Conditional_Operator
+
+    //if there is anything in the variables - otherwise returns undefined
+    if (firstName && lastName && staffName && business) {
+      console.log("firstname length    " + firstName.length);
+      //then count and see that they are greater than 0.  -  js is really crap
+      return firstName.length !== 0 &&
+        lastName.length !== 0 &&
+        staffName.length !== 0 &&
+        business.length !== 0
+        ? true
+        : false;
+    } else {
+      return false;
+    }
+  }
+
   render() {
+    const isEnabled = this.canBeSubmitted();
     return (
       <form onSubmit={this.handleSubmit}>
         <div className="row">
+          <Dropdown
+            isOpen={this.state.dropdownOpen}
+            size="sm"
+            toggle={this.toggle}>
+            <DropdownToggle variant="success" id="dropdown-basic">
+              {this.state.dropDownValue !== ""
+                ? this.state.dropDownValue
+                : "Choose Staff  Member First"}
+            </DropdownToggle>
+
+            <DropdownMenu>
+              {this.props.allStaff.map((item, index) => (
+                <DropdownItem key={index}>
+                  <div onClick={this.changeDropDownValue}> {item}</div>
+                </DropdownItem>
+              ))}
+            </DropdownMenu>
+          </Dropdown>
+
           <input
             placeholder="First Name"
             type="text"
             name="firstName"
             value={this.state.login.firstName}
             onChange={this.handleChange}
+            //  disabled={this.state.inputBoxEnabled}
           />
 
           <input
@@ -149,25 +211,6 @@ class UserLogin extends Component {
             onChange={this.handleChange}
           />
 
-          <Dropdown
-            isOpen={this.state.dropdownOpen}
-            size="sm"
-            toggle={this.toggle}>
-            <DropdownToggle variant="success" id="dropdown-basic">
-              {this.state.login.staffName !== ""
-                ? this.state.login.staffName
-                : "Choose Staff  Member"}
-            </DropdownToggle>
-
-            <DropdownMenu>
-              {this.props.allStaff.map((item, index) => (
-                <DropdownItem key={index}>
-                  <div onClick={this.changeValue}> {item}</div>
-                </DropdownItem>
-              ))}
-            </DropdownMenu>
-          </Dropdown>
-
           <input
             type="text"
             placeholder="Staff name"
@@ -181,15 +224,15 @@ class UserLogin extends Component {
           type="hidden"
           placeholder="Date In"
           name="dateIn"
-          value={this.state.login.dateIn}
-          onChange={this.handleChange}
+          // value={this.state.login.dateIn}
+          //   onChange={this.handleChange}
         />
         <input
           type="hidden"
           placeholder="Date Out"
           name="dateOut"
-          value={this.state.login.dateOut}
-          onChange={this.handleChange}
+          // value={this.state.login.dateOut}
+          //  onChange={this.handleChange}
         />
 
         <input
@@ -197,16 +240,17 @@ class UserLogin extends Component {
           name="id"
           type="hidden"
           name="id"
-          value={this.state.login.id}
-          onChange={this.handleChange}
+          // value={this.state.login.id}
+          // onChange={this.handleChange}
         />
 
         <div className="row">
           <button
             type="submit"
             value="Submit"
+            disabled={!isEnabled}
             className="buttonSubmit btn btn-primary">
-            Visitor Login
+            {isEnabled ? "Visitor Login" : "Complete all fields"}
           </button>
         </div>
       </form>
