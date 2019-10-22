@@ -13,23 +13,22 @@ import {
 //https://html5hive.org/creating-a-react-and-reactstrap-card-gallery/
 //https://reactstrap.github.io/components/card/
 
-
 const ConditionsList = props => {
   return (
     <div className="row">
       {props.conditions.map((item, index) => {
-       return item.includes("Heading") ? (
-         <h2 className="col col-md-12 col-sm-12 heading" key={index}>
-           {item.replace("Heading", "")}
-         </h2>
-       ) : (
-         <div className="col col-md-3 col-sm-6  ">
-           <Card className="cardBody" key={index}>
-             <CardText className="conditions ">{item}</CardText>
-           </Card>
-         </div>
-       );
-                  })}     
+        return item.includes("Heading") ? (
+          <h2 className="col col-md-12 col-sm-12 heading" key={index}>
+            {item.replace("Heading", "")}
+          </h2>
+        ) : (
+          <div className="col col-md-3 col-sm-6  " key={index}>
+            <Card className="cardBody">
+              <CardText className="conditions ">{item}</CardText>
+            </Card>
+          </div>
+        );
+      })}
     </div>
   );
 };

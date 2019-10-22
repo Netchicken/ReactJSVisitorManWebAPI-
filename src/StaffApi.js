@@ -1,9 +1,10 @@
 import { toast } from "react-toastify";
-import {LogVisitorIN } from "AllLogs"
+import { LogVisitorIN, LogThis, UserLoginLog2 } from "./AllLogs";
 const localhost = "https://localhost:44370";
 const baseStaffNamesUrl = localhost + "/api/StaffNamesAPI";
 const baseHomeUrl = localhost + "/api/HomeAPI";
 const baseVisitorUrl = localhost + "/api/VisitorAPI";
+const baseVisitors2Url = localhost + "/api/VisitorsAPI2";
 
 export async function handleResponse(response) {
   if (response.ok) {
@@ -20,7 +21,7 @@ export async function handleResponse(response) {
 }
 
 // In a real app, would likely call an error logging service.
-export function handleError(error) {
+function handleError(error) {
   // eslint-disable-next-line no-console
   console.error("StaffAPI API call failed. " + error);
   throw error;
@@ -38,6 +39,13 @@ export function getAllStaff() {
 //Get the Conditions for acceptance
 export function getConditions() {
   return fetch(baseHomeUrl)
+    .then(handleResponse)
+    .catch(handleError);
+}
+
+//Get the Conditions for acceptance
+export function getAllVisitors() {
+  return fetch(baseVisitors2Url)
     .then(handleResponse)
     .catch(handleError);
 }
@@ -101,42 +109,43 @@ export function deleteStaff(id) {
   //  .then(handleResponse)
   //  .catch(handleError);
 }
-
+//logs the visitors in and adds to visitor DB
 export function visitorLogin(data) {
   LogVisitorIN(data);
-  //try this 'content-type': 'multipart/form-data'
-  if (
-    data.firstName != "" &&
-    data.lastName != "" &&
-    data.business != "" &&
-    data.staffName != ""
-  ) {
-    return fetch(baseVisitorUrl + "/CreateVisitorLogin ", {
-      mode: "cors",
-      method: "POST",
-      headers: {
-        Accept: "application/json, text/plain",
-        "content-type": "application/json"
-      },
-      body: data // JSON.stringify(data)
-    });
-  } else {
-    LogVisitorIN(data);
-  }
+
+  // if (
+  //   data.firstName != "" &&
+  //   data.lastName != "" &&
+  //   data.business != "" &&
+  //   data.staffName != ""
+  // ) {
+  UserLoginLog2(data);
+   return fetch(baseVisitors2Url, {
+    mode: "cors",
+    method: "POST",
+     headers: {
+       Accept: "application/json, text/plain",
+       "content-type": "application/json"
+     },
+      body: JSON.stringify(data)
+} );
+// } else {
+//   LogVisitorIN(data);
+// }
+// }
 }
 
-function LogThis(data) {
-  console.log(
-    "StaffApi L59 " +
-      data.id +
-      " " +
-      data.name +
-      " " +
-      data.department +
-      "  " +
-      baseStaffNamesUrl +
-      "/" +
-      data.id
-  );
-}
+//logout
+export function editVisitor(data) {
+  console.log("Visitor Logout " + data.id);
 
+  return fetch(baseVisitors2Url + "/" + data.id, {
+    mode: "cors",
+    method: "PUT",
+    headers: {
+      Accept: "application/json, text/plain",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(data)
+  });
+}

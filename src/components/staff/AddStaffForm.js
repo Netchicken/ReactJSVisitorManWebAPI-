@@ -1,5 +1,6 @@
 import React from "react";
 import { newStaff, editStaff } from "../../StaffApi";
+import { AddStaffFormLog, AddStaffFormEditedStaffLog } from "../../AllLogs";
 //import { withRouter } from "react-router-dom"; //for history
 import { toast } from "react-toastify";
 
@@ -134,36 +135,15 @@ class AddStaffForm extends React.Component {
     this.setState({
       res: this.stringifyFormData(data)
     });
-    
-    console.log(
-      //cool but not supported in IE
-      "FormData L80 " +
-        data.get("id") +
-        " name " +
-        data.get("name") +
-        " department " +
-        data.get("department") +
-        " visitorCount " +
-        data.get("visitorCount")
-    );
+    AddStaffFormLog(data);
+
     //if there is no editID because we make a new staff
     if (this.props.editID === "") {
       this.UpdateAddState(data); //pass data to addstaff state
     } else {
       this.UpdateEditState(data); //pass data to editstaff state
 
-      console.log(
-        "This new Edited Staff " +
-          this.state.editStaff.id +
-          " name " +
-          this.state.editStaff.name +
-          " dept  " +
-          this.state.editStaff.department +
-          " vc  " +
-          this.state.editStaff.visitorCount +
-          "  bool  " +
-          this.state.isEditing
-      );
+      AddStaffFormEditedStaffLog(this.state);
     }
   }
 

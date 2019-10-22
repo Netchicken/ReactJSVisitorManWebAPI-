@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { toast } from "react-toastify";
 import { visitorLogin } from "../../StaffApi";
+import { UserLoginLog, UserLoginLog2 } from "../../AllLogs";
 import {
   Dropdown,
   DropdownToggle,
@@ -12,20 +13,56 @@ class UserLogin extends Component {
   constructor(props) {
     super(props);
 
-    var date = new Date().getDate();
     this.state = {
-      id: 0,
-      firstName: "",
-      lastName: "",
-      business: "",
-      dateIn: 0,
-      dateOut: 0,
-      staffName: "",
-      dropdownOpen: false
+      login: {
+        id: 0,
+        firstName: "",
+        lastName: "",
+        business: "",
+        dateIn: 0,
+        dateOut: 0,
+        staffName: ""
+      },
+      dropdownOpen: false,
+      saveVisitor: false
     };
 
     this.changeValue = this.changeValue.bind(this);
     this.toggle = this.toggle.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  // componentDidMount(e) {
+  //    data = new FormData(e.target);
+  //     };
+
+  //Use this as an opportunity to operate on the DOM when the component has been updated. This is also a good place to do network requests as long as you compare the current props to previous props (e.g. a network request may not be necessary if the props have not changed).
+
+  //because you can't count on state being updated when you tell it to, when it finally decides to then it will run this method and we can update the backend and tell the AllStaff
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState != this.state) {
+      // console.log(".");
+      //       if (this.state.saveVisitor === true) {
+      //      }
+    }
+  }
+  //https://medium.com/front-end-weekly/react-quick-tip-easy-data-binding-with-a-generic-onchange-handler-fb0254a7094e
+
+  //https://medium.com/better-programming/handling-multiple-form-inputs-in-react-c5eb83755d15
+  handleChange(e) {
+    const name = e.target.name;
+    const newValue = e.target.value;
+    this.setState({
+      login: {
+        ...this.state.login,
+        [name]: newValue
+      }
+    });
+
+    console.log(name); // the name of the form element
+    console.log([name]); // the name of the form element []
+    console.log(newValue); // the value of the form element
   }
 
   //https://reactstrap.github.io/components/dropdowns/
@@ -36,21 +73,7 @@ class UserLogin extends Component {
   }
   //passes the value from the dropdownbox to the staffNames property
   changeValue(e) {
-    this.setState({ staffName: e.currentTarget.textContent });
-  }
-
-  //   changeHandler = event => {
-  //     this.setState({
-  //       firstName: event.target.value
-  //     });
-  //   };
-
-  stringifyFormData(fd) {
-    const data = {};
-    for (let key of fd.keys()) {
-      data[key] = fd.get(key);
-    }
-    return JSON.stringify(data, null, 2);
+    this.setState({ login: { staffName: e.currentTarget.textContent } });
   }
 
   handleSubmit(event) {
@@ -64,30 +87,39 @@ class UserLogin extends Component {
     // form is valid! We can parse and submit data
     //https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects
     //return all the form data from the names
-    const data = new FormData(event.target);
-    //send to DB
-    //visitorLogin(this.stringifyFormData(data));
-    visitorLogin(data);
+    // const data = new FormData(event.target);
+    // this.setState(() => ({
+    //   ...this.state.login,
+    //   login: {
+    //     staffName: data.get("staffName"),
+    //     firstName: data.get("firstName"),
+    //     lastName: data.get("lastName"),
+    //     business: data.get("business"),
+    //     id: data.get("id"),
+    //     dateIn: data.get("dateIn"),
+    //     dateOut: data.get("dateOut")
+    //   }
+    // }));
 
-    // this.setState({
-    //   res: this.stringifyFormData(data)
-    // });
+    toast.success("triggered handleSubmit");
 
-    console.log(
-      //cool but not supported in IE
-      " UserLogin data  firstName " +
-        data.get("firstName") +
-        " lastName " +
-        data.get("lastName") +
-        " dateIn " +
-        data.get("dateIn") +
-        " dateOut " +
-        data.get("dateOut") +
-        " staffName " +
-        data.get("staffName") +
-        " id " +
-        data.get("id")
+    this.setState(() => ({ saveVisitor: true }));
+
+    toast(
+      <div>
+        {this.state.login.firstName} {this.state.login.lastName} has been added
+        {this.state.saveVisitor}
+      </div>
     );
+
+    // UserLoginLog2(this.state.login);
+    visitorLogin(this.state.login);
+
+    toast.success("We did it!");
+    //reset the save to false
+    // this.setState({
+    //   saveVisitor: false
+    // });
   }
 
   render() {
@@ -95,26 +127,26 @@ class UserLogin extends Component {
       <form onSubmit={this.handleSubmit}>
         <div className="row">
           <input
-            placeholder="First name"
-            type="firstName"
+            placeholder="First Name"
+            type="text"
             name="firstName"
-            defaultValue={this.state.firstName}
-            onChange={e => this.setState({ firstName: e.target.value })}
+            value={this.state.login.firstName}
+            onChange={this.handleChange}
           />
 
           <input
-            type="lastName"
+            type="text"
             placeholder="Last Name"
             name="lastName"
-            defaultValue={this.state.lastName}
-            onChange={e => this.setState({ lastName: e.target.value })}
+            value={this.state.login.lastName}
+            onChange={this.handleChange}
           />
           <input
-            type="business"
+            type="text"
             placeholder="Business"
             name="business"
-            defaultValue={this.state.business}
-            onChange={e => this.setState({ business: e.target.value })}
+            value={this.state.login.business}
+            onChange={this.handleChange}
           />
 
           <Dropdown
@@ -122,8 +154,8 @@ class UserLogin extends Component {
             size="sm"
             toggle={this.toggle}>
             <DropdownToggle variant="success" id="dropdown-basic">
-              {this.state.staffName !== ""
-                ? this.state.staffName
+              {this.state.login.staffName !== ""
+                ? this.state.login.staffName
                 : "Choose Staff  Member"}
             </DropdownToggle>
 
@@ -137,11 +169,11 @@ class UserLogin extends Component {
           </Dropdown>
 
           <input
-            type="staffName"
+            type="text"
             placeholder="Staff name"
             name="staffName"
-            defaultValue={this.state.staffName}
-            onChange={e => this.setState({ staffName: e.target.value })}
+            value={this.state.login.staffName}
+            onChange={this.handleChange}
           />
         </div>
 
@@ -149,27 +181,31 @@ class UserLogin extends Component {
           type="hidden"
           placeholder="Date In"
           name="dateIn"
-          defaultValue={this.state.dateIn}
-          //  onChange={e => this.setState({ dateIn: e.target.value })}
+          value={this.state.login.dateIn}
+          onChange={this.handleChange}
         />
         <input
           type="hidden"
           placeholder="Date Out"
           name="dateOut"
-          defaultValue={this.state.dateOut}
-          //  onChange={e => this.setState({ dateIn: e.target.value })}
+          value={this.state.login.dateOut}
+          onChange={this.handleChange}
         />
 
         <input
           placeholder="ID"
           name="id"
           type="hidden"
-          defaultValue={this.state.id}
-          // onChange={e => this.setState({ tempDepartment: e.target.value })}
+          name="id"
+          value={this.state.login.id}
+          onChange={this.handleChange}
         />
 
         <div className="row">
-          <button type="submit" className="buttonSubmit btn btn-primary">
+          <button
+            type="submit"
+            value="Submit"
+            className="buttonSubmit btn btn-primary">
             Visitor Login
           </button>
         </div>

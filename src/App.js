@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { Route, Switch } from "react-router-dom";
-
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import StaffIndex from "./components/staff/StaffIndex";
@@ -10,11 +9,11 @@ import StaffList from "./components/staff/StaffList";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; //make toasts
 import "react-toastify/dist/ReactToastify.min.css";
-
 import AllHome from "./components/home/AllHome";
 import ConditionsList from "./components/home/ConditionsList";
 import UserLogin from "./components/login/UserLogin";
-import AllLogs from "./AllLogs";
+import UserLogout from "./components/login/UserLogout";
+//import AllLogs from "./AllLogs";
 
 class App extends Component {
   render() {
@@ -28,7 +27,8 @@ class App extends Component {
           <Route path="/allhome" component={AllHome} />
           <Route path="/conditionslist" component={ConditionsList} />
           <Route path="/userlogin" component={UserLogin} />
-          <Route path="/alllogs" component={AllLogs} />
+          <Route path="/userlogout" component={UserLogout} />
+          {/*   <Route path="/alllogs" component={AllLogs} /> */}
         </Switch>
         <ToastContainer autoClose={6000} />
       </div>

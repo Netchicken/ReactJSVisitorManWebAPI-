@@ -1,7 +1,8 @@
 import React from "react";
-import { getConditions, getAllStaff } from "../../StaffApi";
+import { getConditions, getAllStaff, getAllVisitors } from "../../StaffApi";
 import ConditionsList from "./ConditionsList";
 import UserLogin from "../login/UserLogin";
+import UserLogout from "../login/UserLogout";
 class AllHome extends React.Component {
   constructor(props) {
     super(props);
@@ -10,17 +11,22 @@ class AllHome extends React.Component {
       string: "",
       conditions: [],
       allStaff: [],
+      allVisitors: [],
       isLoaded: false
     };
   }
 
   componentDidMount() {
-    
     getAllStaff().then(c => {
       this.setState(() => ({
         allStaff: c
       }));
-      //   this.createArray(c);
+    });
+
+    getAllVisitors().then(c => {
+      this.setState(() => ({
+        allVisitors: c
+      }));
     });
 
     getConditions().then(c => {
@@ -28,15 +34,8 @@ class AllHome extends React.Component {
         conditions: c,
         isLoaded: true
       }));
-      //   this.createArray(c);
     });
   }
-
-  // createArray(c) {
-  //   this.setState(() => ({
-  //     conditions: c.split(",")
-  //   }));
-  // }
 
   render() {
     const { isLoaded } = this.state; //pass across the state
@@ -48,6 +47,8 @@ class AllHome extends React.Component {
         <div>
           Conditions List
           <ConditionsList conditions={this.state.conditions} />
+          Visitors Log Out
+          <UserLogout allVisitors={this.state.allVisitors} />
           Visitor Input form
           <UserLogin allStaff={this.state.allStaff} />
         </div>
