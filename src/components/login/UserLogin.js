@@ -84,16 +84,29 @@ class UserLogin extends Component {
     const name = e.target.name;
     const newValue = e.currentTarget.textContent; //   e.target.value;
 
+    //The idea is to create a dummy object perform operations on it and then replace the component's state with the updated object
+    //https://stackoverflow.com/questions/43040721/how-to-update-nested-state-properties-in-react
+    var login = { ...this.state.login };
+    login.staffName = newValue;
+    //  this.setState({ login });   https://stackoverflow.com/questions/58530949/react-updating-nested-state-object-deletes-other-values
+
     this.setState({
+      ...this.state,
       inputBoxEnabled: true,
       dropDownValue: newValue,
-      login: { staffName: newValue }
+      login
     });
 
     console.log(this.state.inputBoxEnabled); // the name of the form element
     console.log(name); // the name of the form element
     // console.log([name]); // the name of the form element []
     // console.log(newValue); // the value of the form element
+  }
+
+  //Hey AllHome! We just updated the back end refresh your visitor list.
+  NotifyAllHome() {
+    var handleToUpdate = this.props.handleToUpdate;
+    handleToUpdate();
   }
 
   handleSubmit(event) {
@@ -107,23 +120,10 @@ class UserLogin extends Component {
     // form is valid! We can parse and submit data
     //https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects
     //return all the form data from the names
-    // const data = new FormData(event.target);
-    // this.setState(() => ({
-    //   ...this.state.login,
-    //   login: {
-    //     staffName: data.get("staffName"),
-    //     firstName: data.get("firstName"),
-    //     lastName: data.get("lastName"),
-    //     business: data.get("business"),
-    //     id: data.get("id"),
-    //     dateIn: data.get("dateIn"),
-    //     dateOut: data.get("dateOut")
-    //   }
-    // }));
 
-    toast.success("triggered handleSubmit");
+    //toast.success("triggered handleSubmit");
 
-    this.setState(() => ({ saveVisitor: true }));
+    //this.setState(() => ({ saveVisitor: true }));
 
     toast(
       <div>
@@ -136,10 +136,24 @@ class UserLogin extends Component {
     visitorLogin(this.state.login);
 
     toast.success("We did it!");
-    //reset the save to false
-    // this.setState({
-    //   saveVisitor: false
-    // });
+
+    this.NotifyAllHome();
+    //reset the input boxes to clear because its a bound form
+    this.setState(() => ({
+      login: {
+        id: 0,
+        firstName: "",
+        lastName: "",
+        business: "",
+        dateIn: 0,
+        dateOut: 0,
+        staffName: ""
+      },
+      dropdownOpen: false,
+      saveVisitor: false,
+      dropDownValue: "",
+      inputBoxEnabled: false
+    }));
   }
 
   canBeSubmitted() {
@@ -150,7 +164,7 @@ class UserLogin extends Component {
 
     //if there is anything in the variables - otherwise returns undefined
     if (firstName && lastName && staffName && business) {
-      console.log("firstname length    " + firstName.length);
+      // console.log("firstname length    " + firstName.length);
       //then count and see that they are greater than 0.  -  js is really crap
       return firstName.length !== 0 &&
         lastName.length !== 0 &&
@@ -166,94 +180,97 @@ class UserLogin extends Component {
   render() {
     const isEnabled = this.canBeSubmitted();
     return (
-      <form onSubmit={this.handleSubmit}>
-        <div className="row">
-          <Dropdown
-            isOpen={this.state.dropdownOpen}
-            size="sm"
-            toggle={this.toggle}>
-            <DropdownToggle variant="success" id="dropdown-basic">
-              {this.state.dropDownValue !== ""
-                ? this.state.dropDownValue
-                : "Choose Staff  Member First"}
-            </DropdownToggle>
+      <div className="container">
+        <form onSubmit={this.handleSubmit}>
+          <div className="row">
+            <Dropdown
+              isOpen={this.state.dropdownOpen}
+              size="sm"
+              toggle={this.toggle}>
+              <DropdownToggle variant="success" id="dropdown-basic">
+                {this.state.dropDownValue !== ""
+                  ? this.state.dropDownValue
+                  : "Choose Staff  Member First"}
+              </DropdownToggle>
 
-            <DropdownMenu>
-              {this.props.allStaff.map((item, index) => (
-                <DropdownItem key={index}>
-                  <div onClick={this.changeDropDownValue}> {item}</div>
-                </DropdownItem>
-              ))}
-            </DropdownMenu>
-          </Dropdown>
+              <DropdownMenu>
+                {this.props.allStaff.map((item, index) => (
+                  <DropdownItem key={index}>
+                    <div onClick={this.changeDropDownValue}> {item}</div>
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+
+            <input
+              placeholder="First Name"
+              type="text"
+              name="firstName"
+              value={this.state.login.firstName}
+              onChange={this.handleChange}
+              //  disabled={this.state.inputBoxEnabled}
+            />
+
+            <input
+              type="text"
+              placeholder="Last Name"
+              name="lastName"
+              value={this.state.login.lastName}
+              onChange={this.handleChange}
+            />
+            <input
+              type="text"
+              placeholder="Business"
+              name="business"
+              value={this.state.login.business}
+              onChange={this.handleChange}
+            />
+
+            <input
+              type="hidden"
+              //type="text"
+              placeholder="Staff name"
+              name="staffName"
+              value={this.state.login.staffName}
+              onChange={this.handleChange}
+            />
+          </div>
 
           <input
-            placeholder="First Name"
-            type="text"
-            name="firstName"
-            value={this.state.login.firstName}
-            onChange={this.handleChange}
-            //  disabled={this.state.inputBoxEnabled}
+            type="hidden"
+            placeholder="Date In"
+            name="dateIn"
+            // value={this.state.login.dateIn}
+            //   onChange={this.handleChange}
+          />
+          <input
+            type="hidden"
+            placeholder="Date Out"
+            name="dateOut"
+            // value={this.state.login.dateOut}
+            //  onChange={this.handleChange}
           />
 
           <input
-            type="text"
-            placeholder="Last Name"
-            name="lastName"
-            value={this.state.login.lastName}
-            onChange={this.handleChange}
-          />
-          <input
-            type="text"
-            placeholder="Business"
-            name="business"
-            value={this.state.login.business}
-            onChange={this.handleChange}
+            placeholder="ID"
+            name="id"
+            type="hidden"
+            name="id"
+            // value={this.state.login.id}
+            // onChange={this.handleChange}
           />
 
-          <input
-            type="text"
-            placeholder="Staff name"
-            name="staffName"
-            value={this.state.login.staffName}
-            onChange={this.handleChange}
-          />
-        </div>
-
-        <input
-          type="hidden"
-          placeholder="Date In"
-          name="dateIn"
-          // value={this.state.login.dateIn}
-          //   onChange={this.handleChange}
-        />
-        <input
-          type="hidden"
-          placeholder="Date Out"
-          name="dateOut"
-          // value={this.state.login.dateOut}
-          //  onChange={this.handleChange}
-        />
-
-        <input
-          placeholder="ID"
-          name="id"
-          type="hidden"
-          name="id"
-          // value={this.state.login.id}
-          // onChange={this.handleChange}
-        />
-
-        <div className="row">
-          <button
-            type="submit"
-            value="Submit"
-            disabled={!isEnabled}
-            className="buttonSubmit btn btn-primary">
-            {isEnabled ? "Visitor Login" : "Complete all fields"}
-          </button>
-        </div>
-      </form>
+          <div className="row">
+            <button
+              type="submit"
+              value="Submit"
+              disabled={!isEnabled}
+              className="buttonSubmit btn btn-primary">
+              {isEnabled ? "Visitor Login" : "Complete all fields"}
+            </button>
+          </div>
+        </form>
+      </div>
     );
   }
 }
